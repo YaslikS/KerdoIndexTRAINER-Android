@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.KerdoIndexTRAINER" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/accent_color</item>
+        <item name="colorPrimaryVariant">@color/accent_color</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/accent_color</item>
+        <item name="colorSecondaryVariant">@color/accent_color</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color.
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        Customize your theme here. -->
+
+        <item name="android:statusBarColor">#002537</item>
+        <item name="android:navigationBarColor">#131313</item>
+    </style>
+</resources>

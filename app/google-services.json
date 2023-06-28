@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "806338344064",
+    "firebase_url": "https://kerdoindexdb-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "kerdoindexdb",
+    "storage_bucket": "kerdoindexdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806338344064:android:2754e7f0e5fce4bdabe265",
+        "android_client_info": {
+          "package_name": "com.AMED.kerdoindex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "806338344064-h6ov1o3m5vfvci1qpb7c7b3d5bqdfqj8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQSBpA6SmUcRhRAX4-h_xbCGAz_H4L5CU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "806338344064-h6ov1o3m5vfvci1qpb7c7b3d5bqdfqj8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "806338344064-61gc740e51oluf6vh5tcm13a4flj5q22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ru.amed.KerdoIndexSPORT"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806338344064:android:f1dcc009ca604087abe265",
+        "android_client_info": {
+          "package_name": "com.amed.kerdoindextrainer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "806338344064-h6ov1o3m5vfvci1qpb7c7b3d5bqdfqj8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQSBpA6SmUcRhRAX4-h_xbCGAz_H4L5CU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "806338344064-h6ov1o3m5vfvci1qpb7c7b3d5bqdfqj8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "806338344064-61gc740e51oluf6vh5tcm13a4flj5q22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ru.amed.KerdoIndexSPORT"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
