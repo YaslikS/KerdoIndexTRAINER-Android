@@ -12,17 +12,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.amed.kerdoindextrainer.R
-import com.amed.kerdoindextrainer.adapters.SportsmanAdapter
 import com.amed.kerdoindextrainer.databinding.FragmentDetailsBinding
-import com.amed.kerdoindextrainer.databinding.FragmentProfileBinding
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
-import com.amed.kerdoindextrainer.model.Measure
-import com.amed.kerdoindextrainer.model.MeasureJsonManager
-import com.amed.kerdoindextrainer.model.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.User
+import com.amed.kerdoindextrainer.model.json.Measure
+import com.amed.kerdoindextrainer.model.json.MeasureJsonManager
+import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
+import com.amed.kerdoindextrainer.model.json.User
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -30,9 +27,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import kotlinx.android.synthetic.main.fragment_details.*
 import kotlinx.coroutines.*
-import org.w3c.dom.Text
 import java.util.ArrayList
 
 class DetailsFragment : Fragment(), OnChartValueSelectedListener {

@@ -3,9 +3,10 @@ package com.amed.kerdoindextrainer.fireBaseManagers
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.amed.kerdoindextrainer.model.SharedPreferencesManager
+import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 
 class FireBaseAuthManager(context: Context) {
 
@@ -35,20 +36,44 @@ class FireBaseAuthManager(context: Context) {
     }
 
     // повторная авторизация
-    fun reAuth(){
+    fun reAuth(resultReAuth: (Int, String) -> Unit){
         Log.i(TAG, "reAuth: entrance")
         fbAuth?.currentUser?.reauthenticate(EmailAuthProvider.getCredential(
             sharedPreferencesManager?.getYourEmail()!!,
             sharedPreferencesManager?.getPassword()!!
-        ))?.addOnSuccessListener {
-            Log.i(TAG, "reAuth: User re-authenticated")
-        }?.addOnFailureListener {
-            Log.i(TAG, "reAuth: User NOT re-authenticated")
+        ))?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.i(TAG, "reAuth: User re-authenticated" + fbAuth?.currentUser?.uid)
+                resultReAuth(0, "")
+            } else {
+                val errorCode = (task.exception as FirebaseAuthException?)!!.errorCode
+                when (errorCode) {
+                    "ERROR_WRONG_PASSWORD" -> {
+                        Log.i(TAG, "auth: ERROR_WRONG_PASSWORD : $errorCode")
+                        logOut()
+                        resultReAuth(2, "")
+                    }
+                    "ERROR_USER_NOT_FOUND" -> {
+                        Log.i(TAG, "auth: ERROR_USER_NOT_FOUND : $errorCode")
+                        logOut()
+                        resultReAuth(3, "")
+                    }
+                    "ERROR_NETWORK_REQUEST_FAILED" -> {
+                        Log.i(TAG, "auth: ERROR_NETWORK_REQUEST_FAILED : $errorCode")
+                        resultReAuth(4, "")
+                    }
+                    else -> {
+                        Log.i(TAG, "reAuth: User NOT re-authenticated: ${task.exception}")
+                        logOut()
+                        resultReAuth(1, "Error: ${task.exception}")
+                    }
+                }
+            }
         }
     }
 
     // авторизация
-    fun auth(email: String, pass: String, resultAuth: (Int) -> Unit) {
+    fun auth(email: String, pass: String, resultAuth: (Int, String) -> Unit) {
         Log.i(TAG, "auth: entrance")
         fbAuth!!.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -57,29 +82,60 @@ class FireBaseAuthManager(context: Context) {
                 )
                 emailUser = fbAuth?.currentUser?.email!!
                 sharedPreferencesManager?.saveIdUser(fbAuth?.currentUser?.uid!!)
-                authWas = true
-                login(email, pass, resultAuth)
+                resultAuth(0, "")
             } else {
-                Log.i(TAG, "auth: User auth failed")
-                resultAuth(0)
+                Log.i(TAG, "auth: User auth failed : ${task.exception}")
+                //Log.i(TAG, "auth: task.result : ${task.result}")
+                val errorCode = (task.exception as FirebaseAuthException?)!!.errorCode
+                when (errorCode) {
+                    "ERROR_EMAIL_ALREADY_IN_USE" -> {
+                        Log.i(TAG, "auth: ERROR_EMAIL_ALREADY_IN_USE : $errorCode")
+                        resultAuth(2, "")
+                    }
+                    "ERROR_NETWORK_REQUEST_FAILED" -> {
+                        Log.i(TAG, "auth: ERROR_NETWORK_REQUEST_FAILED : $errorCode")
+                        resultAuth(3, "")
+                    }
+                    else -> {
+                        Log.i(TAG, "auth: error : $errorCode")
+                        resultAuth(1, "Error: $errorCode")
+                    }
+                }
             }
         }
         Log.i(TAG, "auth: exit")
     }
 
     // вход
-    fun login(email: String, pass: String, resultAuth: (Int) -> Unit) {
-        reAuth()
+    fun login(email: String, pass: String, resultLogin: (Int, String) -> Unit) {
         Log.i(TAG, "login: entrance")
         fbAuth!!.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.i(TAG, "login: User login Successful " + fbAuth?.currentUser?.uid)
                 sharedPreferencesManager?.saveIdUser(fbAuth?.currentUser?.uid!!)
                 emailUser = fbAuth?.currentUser?.email!!
-                resultAuth(1)
+                resultLogin(0, "")
             } else {
-                Log.i(TAG, "login: User login failed")
-                auth(email, pass, resultAuth)
+                val errorCode = (task.exception as FirebaseAuthException?)!!.errorCode
+                when (errorCode) {
+                    "ERROR_WRONG_PASSWORD" -> {
+                        Log.i(TAG, "auth: ERROR_WRONG_PASSWORD : $errorCode")
+                        resultLogin(2, "")
+                    }
+                    "ERROR_USER_NOT_FOUND" -> {
+                        Log.i(TAG, "auth: ERROR_USER_NOT_FOUND : $errorCode")
+                        resultLogin(3, "")
+                    }
+                    "ERROR_NETWORK_REQUEST_FAILED" -> {
+                        Log.i(TAG, "auth: ERROR_NETWORK_REQUEST_FAILED : $errorCode")
+                        resultLogin(4, "")
+                    }
+                    else -> {
+                        Log.i(TAG, "login: User login failed : ${task.exception}")
+                        Log.i(TAG, "auth: task.result : ${task.result}")
+                        resultLogin(1, "Error: ${task.exception}")
+                    }
+                }
             }
         }
     }
@@ -103,13 +159,14 @@ class FireBaseAuthManager(context: Context) {
     }
 
     // удаление аккаунта
-    fun deleteAccount(){
+    fun deleteAccount(resultDel: (Int, String) -> Unit){
         Log.i(TAG, "deleteAccount: entrance " + fbAuth?.currentUser?.uid)
-        //logOut()
-        fbAuth?.currentUser?.delete()?.addOnSuccessListener {
+        fbAuth?.currentUser?.delete()?.addOnSuccessListener {task ->
             Log.i(TAG, "deleteAccount: User delete Successful " + fbAuth?.currentUser?.uid)
+            resultDel(0, "")
         }?.addOnFailureListener {
-            Log.i(TAG, "deleteAccount: User delete failed " + fbAuth?.currentUser?.uid)
+            Log.i(TAG, "deleteAccount: it.localizedMessage: " + it.localizedMessage)
+            resultDel(1, "Error: ${it.localizedMessage}")
         }
     }
 

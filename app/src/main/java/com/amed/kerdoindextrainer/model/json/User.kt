@@ -1,4 +1,4 @@
-package com.amed.kerdoindextrainer.model
+package com.amed.kerdoindextrainer.model.json
 
 data class User(
     val id: String? = "",

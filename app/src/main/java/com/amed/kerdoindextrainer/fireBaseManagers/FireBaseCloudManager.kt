@@ -2,16 +2,13 @@ package com.amed.kerdoindextrainer.fireBaseManagers
 
 import android.content.Context
 import android.util.Log
-import com.amed.kerdoindextrainer.model.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.User
-import com.google.firebase.firestore.DocumentSnapshot
+import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
+import com.amed.kerdoindextrainer.model.json.User
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class FireBaseCloudManager(context: Context) {
 
@@ -29,8 +26,8 @@ class FireBaseCloudManager(context: Context) {
         var user = User(
             sharedPreferencesManager?.getIdUser(),
             "t",
-            sharedPreferencesManager?.getYourName(),
-            sharedPreferencesManager?.getYourEmail(),
+            name = sharedPreferencesManager?.getYourName(),
+            email = sharedPreferencesManager?.getYourEmail(),
             sharedPreferencesManager?.getYourImageURL(),
             "",
             sharedPreferencesManager?.getLastDate(),
@@ -165,6 +162,22 @@ class FireBaseCloudManager(context: Context) {
                     "deleteSportsman: Error deleting user info.", exception
                 )
                 resultDeleteSportsman(0)
+            }
+    }
+
+    // получение данных пользователя
+    fun getCloudUserData(){
+        Log.i(TAG, "getCloudUserData: entrance")
+        db.collection("users")
+            .document(sharedPreferencesManager?.getIdUser()!!)
+            .get()
+            .addOnSuccessListener { document ->
+                val name = document.get("name") as String
+                Log.i(TAG, "getCloudUserData: name user = $name")
+                sharedPreferencesManager?.saveYourName(name)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "getCloudUserData: Error getting documents.", exception)
             }
     }
 

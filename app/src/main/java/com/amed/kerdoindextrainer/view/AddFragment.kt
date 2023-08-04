@@ -99,7 +99,7 @@ class AddFragment : Fragment() {
                 binding?.errorTV?.visibility = TextView.VISIBLE
             binding?.addButton?.isClickable = false
             when (edt.id) {
-                R.id.yourEmailTF -> {
+                R.id.textInputEditText -> {
                     emailValid = false
                     Log.i(TAG, "yourEmailTF: email is not valid")
                 }
@@ -109,7 +109,7 @@ class AddFragment : Fragment() {
             binding?.errorTV?.visibility = TextView.INVISIBLE
             binding?.addButton?.isClickable = true
             when (edt.id) {
-                R.id.yourEmailTF -> {
+                R.id.textInputEditText -> {
                     emailValid = true
                     Log.i(TAG, "yourEmailTF: email is valid")
                 }

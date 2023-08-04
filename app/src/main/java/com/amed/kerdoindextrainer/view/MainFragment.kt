@@ -8,11 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.isEmpty
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,12 +20,10 @@ import com.amed.kerdoindextrainer.databinding.FragmentMainBinding
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseAuthManager
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
-import com.amed.kerdoindextrainer.model.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.User
-import kotlinx.android.synthetic.main.fragment_main.*
+import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
+import com.amed.kerdoindextrainer.model.json.User
+import com.amed.kerdoindextrainer.view.profile.ProfileFragment
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 
 class MainFragment : Fragment() {
 
@@ -109,11 +104,11 @@ class MainFragment : Fragment() {
                     + sharedPreferencesManager?.getYourEmail() + " / getPassword: " +
                     sharedPreferencesManager?.getPassword()
             )
-            fireBaseAuthManager!!.login(
-                sharedPreferencesManager?.getYourEmail()!!,
-                sharedPreferencesManager?.getPassword()!!,
-                ::resultAuth
-            )
+//            fireBaseAuthManager!!.login(
+//                sharedPreferencesManager?.getYourEmail()!!,
+//                sharedPreferencesManager?.getPassword()!!,
+//                ::resultAuth
+//            )
         }
         Log.i(TAG, "tryAuth: exit")
     }

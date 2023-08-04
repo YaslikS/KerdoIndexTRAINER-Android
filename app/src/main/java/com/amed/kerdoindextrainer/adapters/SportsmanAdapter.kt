@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.amed.kerdoindextrainer.R
-import com.amed.kerdoindextrainer.model.User
+import com.amed.kerdoindextrainer.model.json.User
 
 class SportsmanAdapter() : RecyclerView.Adapter<SportsmanAdapter.MyViewHolder>() {
 

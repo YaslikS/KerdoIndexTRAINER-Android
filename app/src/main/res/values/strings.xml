@@ -33,5 +33,8 @@
     <string name="delete_sportsman">Delete sportsman</string>
     <string name="qwertyqwerty">qwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwertyqwerty</string>
     <string name="about_kerdoindextrainer">About KerdoIndexTRAINER</string>
+    <string name="backTo">Back</string>
+    <string name="Login">Login</string>
+    <string name="registration">Registration</string>
 
 </resources>
