@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
@@ -49,10 +50,17 @@ class MainFragment : Fragment() {
         sharedPreferencesManager = SharedPreferencesManager(requireActivity())
         fireBaseCloudManager = FireBaseCloudManager(requireActivity())
         fireBaseAuthManager = FireBaseAuthManager(requireActivity())
-        settingsViews()
 
         Log.i(TAG, "onCreateView: exit")
         return binding?.root
+    }
+
+    override fun onStart() {
+        Log.i(TAG, "onStart: entrance")
+        super.onStart()
+        settingsViews()
+        tryAuth()
+        Log.i(TAG, "onStart: exit")
     }
 
     // результат получения
@@ -97,20 +105,59 @@ class MainFragment : Fragment() {
     // попытка авторизации
     private fun tryAuth() {
         Log.i(TAG, "tryAuth: entrance")
-        if (!TextUtils.isEmpty(sharedPreferencesManager?.getYourEmail())
-            && !TextUtils.isEmpty(sharedPreferencesManager?.getPassword())
-        ) {
-            Log.i(TAG, "tryAuth: getYourEmail && getPassword != empty : getYourEmail: "
-                    + sharedPreferencesManager?.getYourEmail() + " / getPassword: " +
-                    sharedPreferencesManager?.getPassword()
-            )
-//            fireBaseAuthManager!!.login(
-//                sharedPreferencesManager?.getYourEmail()!!,
-//                sharedPreferencesManager?.getPassword()!!,
-//                ::resultAuth
-//            )
-        }
+        fireBaseAuthManager?.reAuth(::reAuthResult)
         Log.i(TAG, "tryAuth: exit")
+    }
+
+    // результат ре-авторизации
+    private fun reAuthResult(state: Int, desc: String) {
+        Log.i(TAG, "reAuthResult: entrance")
+        when (state) {
+            0 -> {  //  удачный вход
+                Log.i(TAG, "reAuthResult: state = $state")
+                binding?.noAuthCL?.visibility = ConstraintLayout.INVISIBLE
+                //fireBaseCloudManager?.getCloudData()
+            }
+
+            4 -> {  //  проблема с интернетом
+                Log.i(TAG, "reAuthResult: state = $state")
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("Check your internet connection")
+                    .setPositiveButton("OK") { _, _ ->
+                        //binding?.progressCL?.visibility = ConstraintLayout.INVISIBLE
+                        Log.i(TAG, "reAuthResult: AlertDialog: OK")
+                    }.show()
+            }
+
+            else -> {
+                Log.i(TAG, "reAuthResult: state = $state")
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("Unexpected login error. Try login manually")
+                    .setPositiveButton("OK") { _, _ ->
+                        //binding?.progressCL?.visibility = ConstraintLayout.INVISIBLE
+                        Log.i(TAG, "reAuthResult: AlertDialog: OK")
+                    }.show()
+                binding?.hatCL?.setBackgroundColor(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.redGraph
+                    )
+                )
+                binding?.noAuthCL?.visibility = ConstraintLayout.VISIBLE
+                binding?.appTitle?.text = "You not logged in!"
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(3000)
+                    binding?.hatCL?.setBackgroundColor(
+                        ContextCompat.getColor(
+                            requireActivity(),
+                            R.color.backgroundLinear
+                        )
+                    )
+                    delay(6000)
+                    launch(Dispatchers.Main) { binding?.appTitle?.text = "KerdoIndexSPORT" }
+                }
+            }
+        }
     }
 
     // обработка результата авторизации

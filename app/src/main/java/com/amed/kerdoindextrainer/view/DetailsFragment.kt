@@ -16,6 +16,7 @@ import com.amed.kerdoindextrainer.R
 import com.amed.kerdoindextrainer.databinding.FragmentDetailsBinding
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
+import com.amed.kerdoindextrainer.model.Strings
 import com.amed.kerdoindextrainer.model.json.Measure
 import com.amed.kerdoindextrainer.model.json.MeasureJsonManager
 import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
@@ -133,7 +134,7 @@ class DetailsFragment : Fragment(), OnChartValueSelectedListener {
             }
         }
         //  настройка данных графика
-        val set = BarDataSet(values, "Values")
+        val set = BarDataSet(values, Strings.valuesFieldStr.value)
         set.colors = colors
         //  настройка отображения графика
         val data = BarData(set)
@@ -169,7 +170,7 @@ class DetailsFragment : Fragment(), OnChartValueSelectedListener {
             values.add(BarEntry((index + 1).toFloat(), entry2.Pulse?.toFloat()!!))
         }
         //  настройка данных графика
-        val set = BarDataSet(values, "Values")
+        val set = BarDataSet(values, Strings.valuesFieldStr.value)
         //  настройка отображения графика
         val data = BarData(set)
         data.setValueTextSize(12f)
@@ -204,7 +205,7 @@ class DetailsFragment : Fragment(), OnChartValueSelectedListener {
             values.add(BarEntry((index + 1).toFloat(), entry2.DAD?.toFloat()!!))
         }
         //  настройка данных графика
-        val set = BarDataSet(values, "Values")
+        val set = BarDataSet(values, Strings.valuesFieldStr.value)
         //  настройка отображения графика
         val data = BarData(set)
         data.setValueTextSize(12f)

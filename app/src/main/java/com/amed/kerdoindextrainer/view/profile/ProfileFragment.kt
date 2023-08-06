@@ -1,20 +1,14 @@
 package com.amed.kerdoindextrainer.view.profile
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
 import android.util.Log
-import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.amed.kerdoindextrainer.R
@@ -23,7 +17,6 @@ import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseAuthManager
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
 import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.sha256
 import com.amed.kerdoindextrainer.view.AboutFragment
 import kotlinx.coroutines.*
 

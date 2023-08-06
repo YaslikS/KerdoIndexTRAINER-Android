@@ -2,6 +2,7 @@ package com.amed.kerdoindextrainer.fireBaseManagers
 
 import android.content.Context
 import android.util.Log
+import com.amed.kerdoindextrainer.model.Strings
 import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
 import com.amed.kerdoindextrainer.model.json.User
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -39,7 +40,7 @@ class FireBaseCloudManager(context: Context) {
             "addUserInCloudData: user.id = " + user.id + " user.name = " + user.name + " user.email " + user.email
         )
 
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(sharedPreferencesManager?.getIdUser()!!)
             .set(user)
             .addOnSuccessListener { documentReference ->
@@ -60,9 +61,9 @@ class FireBaseCloudManager(context: Context) {
             "updateNameInCloudData: userId = " + sharedPreferencesManager?.getIdUser()!!
                     + " nameUser = " + sharedPreferencesManager?.getYourName()!!
         )
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(sharedPreferencesManager?.getIdUser()!!)
-            .update("name", sharedPreferencesManager?.getYourName())
+            .update(Strings.nameFieldStr.value, sharedPreferencesManager?.getYourName())
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG,
                     "updateNameInCloudData: DocumentSnapshot added with ID: ${documentReference}")
@@ -80,9 +81,9 @@ class FireBaseCloudManager(context: Context) {
             "updateUrlIconInCloudData: userId = " + sharedPreferencesManager?.getIdUser()!!
                     + " iconUrlUser = { " + sharedPreferencesManager?.getYourImageURL()!! + " }"
         )
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(sharedPreferencesManager?.getIdUser()!!)
-            .update("iconUrl", sharedPreferencesManager?.getYourImageURL())
+            .update(Strings.iconUrlFieldStr.value, sharedPreferencesManager?.getYourImageURL())
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG,
                     "updateUrlIconInCloudData: DocumentSnapshot added with ID: ${documentReference}")
@@ -96,7 +97,7 @@ class FireBaseCloudManager(context: Context) {
     // удаление пользователя
     fun deleteInCloudData() {
         Log.i(TAG, "deleteInCloudData: entrance")
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(sharedPreferencesManager?.getIdUser()!!)
             .delete()
             .addOnSuccessListener { documentReference ->
@@ -114,8 +115,8 @@ class FireBaseCloudManager(context: Context) {
     fun saveSportsman(sportsman: String, resultSaveSportsman: (Int) -> Unit) {
         Log.i(TAG, "saveSportsman: entrance")
         var gettedSportsman: QueryDocumentSnapshot? = null
-        db.collection("users")
-            .whereEqualTo("email", sportsman)
+        db.collection(Strings.usersTableStr.value)
+            .whereEqualTo(Strings.emailFieldStr.value, sportsman)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
@@ -124,7 +125,7 @@ class FireBaseCloudManager(context: Context) {
                 if (gettedSportsman != null) {
                     Log.d(TAG, "${gettedSportsman!!.id} => ${gettedSportsman!!.data}")
 
-                    db.collection("users")
+                    db.collection(Strings.usersTableStr.value)
                         .document(gettedSportsman!!.id)
                         .update("trainerId", sharedPreferencesManager?.getIdUser())
                         .addOnSuccessListener { documentReference ->
@@ -146,7 +147,7 @@ class FireBaseCloudManager(context: Context) {
 
     // открепление спортсмена от тренера
     fun deleteSportsman(id: String, resultDeleteSportsman: (Int) -> Unit) {
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(id)
             .update("trainerId", "")
             .addOnSuccessListener { documentReference ->
@@ -168,11 +169,11 @@ class FireBaseCloudManager(context: Context) {
     // получение данных пользователя
     fun getCloudUserData(){
         Log.i(TAG, "getCloudUserData: entrance")
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .document(sharedPreferencesManager?.getIdUser()!!)
             .get()
             .addOnSuccessListener { document ->
-                val name = document.get("name") as String
+                val name = document.get(Strings.nameFieldStr.value) as String
                 Log.i(TAG, "getCloudUserData: name user = $name")
                 sharedPreferencesManager?.saveYourName(name)
             }
@@ -184,7 +185,7 @@ class FireBaseCloudManager(context: Context) {
     // получение списка пользователей
     suspend fun getCloudData(resultSaveSportsman: (Int) -> Unit) = callbackFlow<User> {
         Log.i(TAG, "getCloudData: entrance")
-        db.collection("users")
+        db.collection(Strings.usersTableStr.value)
             .whereEqualTo("trainerId", sharedPreferencesManager?.getIdUser())
             .get()
             .addOnSuccessListener { documents ->
@@ -192,8 +193,8 @@ class FireBaseCloudManager(context: Context) {
                     Log.d(TAG, "${document!!.id} => ${document!!.data}")
                     val sportsman = User(
                         id = document.id,
-                        email = document.get("email").toString(),
-                        name = document.get("name").toString(),
+                        email = document.get(Strings.emailFieldStr.value).toString(),
+                        name = document.get(Strings.nameFieldStr.value).toString(),
                     )
                     trySend(sportsman)
                 }
@@ -214,17 +215,17 @@ class FireBaseCloudManager(context: Context) {
     suspend fun getSportsmanData(id: String, resultSaveSportsman: (Int) -> Unit) =
         callbackFlow<User> {
             Log.i(TAG, "getSportsmanData: entrance: id = $id")
-            db.collection("users")
+            db.collection(Strings.usersTableStr.value)
                 .document(id)
                 .get()
                 .addOnSuccessListener { document ->
-                    Log.i(TAG, "getSportsmanData: getted document = " + document.get("lastDate"))
+                    Log.i(TAG, "getSportsmanData: getted document = " + document.get(Strings.lastDateFieldStr.value))
                     val sportsman = User(
                         id = document.id,
-                        email = document.get("email").toString(),
-                        name = document.get("name").toString(),
-                        json = document.get("json").toString(),
-                        lastDate = document.get("lastDate").toString(),
+                        email = document.get(Strings.emailFieldStr.value).toString(),
+                        name = document.get(Strings.nameFieldStr.value).toString(),
+                        json = document.get(Strings.jsonFieldStr.value).toString(),
+                        lastDate = document.get(Strings.lastDateFieldStr.value).toString(),
                     )
                     trySend(sportsman)
                     resultSaveSportsman(1)
@@ -240,12 +241,12 @@ class FireBaseCloudManager(context: Context) {
     // получение типа пользователя
     fun getTypeUser(email: String, resultGetTypeUser: (Int, String?) -> Unit){
         Log.i(TAG, "getTypeUser: entrance")
-        db.collection("users")
-            .whereEqualTo("email", email)
+        db.collection(Strings.usersTableStr.value)
+            .whereEqualTo(Strings.emailFieldStr.value, email)
             .get()
             .addOnSuccessListener { documents ->
-                Log.i(TAG, "getTypeUser: type user = " + documents.documents[0].get("type"))
-                val typeStr = documents.documents[0].get("type") as String
+                Log.i(TAG, "getTypeUser: type user = " + documents.documents[0].get(Strings.typeFieldStr.value))
+                val typeStr = documents.documents[0].get(Strings.typeFieldStr.value) as String
                 resultGetTypeUser(1, typeStr)
             }
             .addOnFailureListener { exception ->

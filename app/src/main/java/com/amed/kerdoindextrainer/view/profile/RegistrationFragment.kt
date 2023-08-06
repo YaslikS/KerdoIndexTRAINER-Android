@@ -18,7 +18,6 @@ import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseAuthManager
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
 import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.sha256
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -66,7 +65,7 @@ class RegistrationFragment : Fragment() {
                 )
                 fireBaseAuthManager?.auth(
                     binding?.emailEditText?.text.toString(),
-                    binding?.passEditText?.text.toString()?.sha256()!!,
+                    binding?.passEditText?.text.toString(),
                     ::resultRegis
                 )
                 binding?.regisProgressBar?.visibility = ProgressBar.VISIBLE
@@ -101,7 +100,7 @@ class RegistrationFragment : Fragment() {
                 Log.i(TAG, "resultAuth: state = $state")
                 sharedPreferencesManager?.saveYourEmail(binding?.emailEditText?.text.toString())
                 sharedPreferencesManager?.savePassword(
-                    binding?.passEditText?.text.toString().sha256()
+                    binding?.passEditText?.text.toString()
                 )
                 sharedPreferencesManager?.saveYourName(binding?.nameEditText?.text.toString())
                 fireBaseCloudManager?.addUserInCloudData()
@@ -113,7 +112,8 @@ class RegistrationFragment : Fragment() {
                 Log.i(TAG, "resultAuth: state = $state")
                 binding?.regisProgressBar?.visibility = ProgressBar.INVISIBLE
                 AlertDialog.Builder(requireActivity())
-                    .setTitle("Error: $desc")
+                    .setTitle("Error")
+                    .setMessage("Error: $desc")
                     .setPositiveButton("OK") { _, _ ->
                         //binding?.progressCL?.visibility = ConstraintLayout.INVISIBLE
                         Log.i(TAG, "resultAuth: AlertDialog: OK")

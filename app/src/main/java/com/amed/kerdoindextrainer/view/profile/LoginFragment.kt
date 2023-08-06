@@ -5,20 +5,19 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.amed.kerdoindextrainer.R
 import com.amed.kerdoindextrainer.databinding.FragmentLoginBinding
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseAuthManager
 import com.amed.kerdoindextrainer.fireBaseManagers.FireBaseCloudManager
 import com.amed.kerdoindextrainer.fireBaseManagers.hasConnection
 import com.amed.kerdoindextrainer.model.json.SharedPreferencesManager
-import com.amed.kerdoindextrainer.model.sha256
 import kotlinx.android.synthetic.main.fragment_registration.emailEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +65,7 @@ class LoginFragment : Fragment() {
                 )
                 fireBaseAuthManager?.login(
                     binding?.emailEditText?.text.toString(),
-                    binding?.passEditText?.text.toString()?.sha256()!!,
+                    binding?.passEditText?.text.toString(),
                     ::resultLogin
                 )
                 binding?.loginProgressBar?.visibility = ProgressBar.VISIBLE
@@ -87,6 +86,54 @@ class LoginFragment : Fragment() {
         binding?.backTVInProfileFragment?.setOnClickListener {
             Log.i(TAG, "buttonListeners: backTVInProfileFragment: entrance")
             activity?.supportFragmentManager?.popBackStack()
+        }
+        // прослушивает кнопку сброса пароля
+        binding?.forgotPasswordButton?.setOnClickListener {
+            Log.i(TAG, "buttonListeners: forgotPasswordButton: entrance")
+            if (emailValid) {
+                Log.i(TAG, "buttonListeners: forgotPasswordButton: emailValid = $emailValid")
+                fireBaseAuthManager?.resetPass(
+                    binding?.emailEditText?.text.toString(),
+                    ::resetPassResult
+                )
+            } else {
+                Log.i(TAG, "buttonListeners: forgotPasswordButton: emailValid = $emailValid")
+                binding?.loginProgressBar?.visibility = ProgressBar.INVISIBLE
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("Enter your email address")
+                    .setMessage("Enter your email address to which the password reset message will be sent")
+                    .setPositiveButton("OK") { _, _ ->
+                        Log.i(TAG, "resultAuth: AlertDialog: OK")
+                    }.show()
+            }
+        }
+    }
+
+    // результат отправки почты для сбросом пароля
+    private fun resetPassResult(state: Int, desc: String) {
+        Log.i(TAG, "resetPassResult: entrance")
+        when (state) {
+            0 -> {  //  удачно
+                Log.i(TAG, "resultAuth: state = $state")
+                binding?.loginProgressBar?.visibility = ProgressBar.INVISIBLE
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("We have sent instructions")
+                    .setMessage("We have sent instructions on how to reset your password to your email!")
+                    .setPositiveButton("OK") { _, _ ->
+                        Log.i(TAG, "resultAuth: AlertDialog: OK")
+                    }.show()
+            }
+
+            1 -> {  //  НЕудачно
+                Log.i(TAG, "resultAuth: state = $state")
+                binding?.loginProgressBar?.visibility = ProgressBar.INVISIBLE
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("Error sending email")
+                    .setMessage("Error sending email: $desc")
+                    .setPositiveButton("OK") { _, _ ->
+                        Log.i(TAG, "resultAuth: AlertDialog: OK")
+                    }.show()
+            }
         }
     }
 
@@ -161,7 +208,7 @@ class LoginFragment : Fragment() {
                     fireBaseCloudManager?.getCloudUserData()
                     sharedPreferencesManager?.saveYourEmail(binding?.emailEditText?.text.toString())
                     sharedPreferencesManager?.savePassword(
-                        binding?.passEditText?.text.toString().sha256()
+                        binding?.passEditText?.text.toString()
                     )
                     binding?.loginProgressBar?.visibility = ProgressBar.INVISIBLE
                     activity?.supportFragmentManager?.popBackStack()
